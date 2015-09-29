@@ -3,19 +3,27 @@
     <h2>Settings</h2>
 </div>
 <sca-menutab menu="settings_menu" active="'profile'"></sca-menutab>
-<div class="container">
+<div class="container-fluid">
     <!--<h3 class="page-header">Public Profile</h3>-->
+    <!--
     <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    -->
     <ul class="list-group settings">
         <li class="list-group-item heading">
             <h4 class="list-group-item-heading">Public Profile</h4>
         </li>
         <li class="list-group-item">
+            <p class="text-muted">Only accessible to other logged in users</p>
             <form ng-submit="submit_profile();">
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" class="form-control" ng-model="form_profile.fullname" name="fullname" 
                         placeholder="Your full name" required/>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" ng-model="form_profile.email" name="email" 
+                        placeholder="Your email" required/>
                 </div>
                 <div class="form-group">
                     <label>Biograph</label>

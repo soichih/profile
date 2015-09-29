@@ -9,7 +9,7 @@ var app = angular.module('app', [
     'toaster',
     'angular-loading-bar',
     'angular-jwt',
-    'sca',
+    'sca-shared',
 ]);
 
 //show loading bar at the top
