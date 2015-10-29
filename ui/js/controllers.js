@@ -1,19 +1,10 @@
 
-
 app.controller('SettingsController', ['$scope', 'appconf', '$route', 'toaster', '$http', 'jwtHelper',
 function($scope, appconf, $route, toaster, $http, jwtHelper) {
     $scope.form_profile = {}; //to be loaded later
     $scope.user = null;
+    $scope.appconf = appconf;
 
-    /* now performed via router config
-    //forward to auth page if jwt is missing
-    var jwt = localStorage.getItem(appconf.jwt_id);
-    if(jwt == null || jwtHelper.isTokenExpired(jwt)) {
-        localStorage.setItem('post_auth_redirect', window.location.toString());
-        window.location = appconf.auth_url;
-        return;
-    }
-    */
     var jwt = localStorage.getItem(appconf.jwt_id);
     var user = jwtHelper.decodeToken(jwt);
 
@@ -33,56 +24,30 @@ function($scope, appconf, $route, toaster, $http, jwtHelper) {
         $scope.user = info;
     });
     
-    //load menu (TODO - turn this into a service?)
-    $http.get(appconf.shared_api+'/menu')
-    .success(function(menu) {
-        $scope.menu = menu;
-
-        /*
-        //massage menu before setting
-        var user_menu = findMenuItem('user', menu);
-        //user_menu.label = $scope.form_profile.fullname;
-        user_menu.label = function() { return "yoo";};
-        */
-
-        //split menu into each menues
-        menu.forEach(function(m) {
-            switch(m.id) {
-            case 'top': 
-                $scope.top_menu = m;
-                break;
-            case 'settings':
-                $scope.settings_menu = m;
-                break;
-            }
-        });
+    //load menus (TODO - turn this into a service?)
+    $http.get(appconf.shared_api+'/menu/top')
+    .then(function(res) {
+        $scope.top_menu = res.data;
     });
-
+    $http.get(appconf.shared_api+'/menu/settings')
+    .then(function(res) {
+        $scope.settings_menu = res.data;
+    });
+    
     $scope.submit_profile = function() {
         $http.put(appconf.api+'/public/'+user.sub, $scope.form_profile)
         .success(function(data, status, headers, config) {
-            toaster.success(data.message);
+            var redirect = sessionStorage.getItem('profile_settings_redirect');
+            if(redirect) {
+                //TODO - send success message via cookie(or sca shared service)
+                window.location = redirect;
+            } else {
+                toaster.success(data.message);
+            }
         })
         .error(function(data, status, headers, config) {
             toaster.error(data.message);
         });         
     }
-
-    /*
-    function findMenuItem(id, ms) {
-        for(var i = 0;i< ms.length;++i) {
-            var m = ms[i]; 
-            if(m.id == id) return m;
-            if(m.submenu) {
-                var found = findMenuItem(id, m.submenu); //recurse into submenu
-                if(found != null) {
-                    return found;
-                }
-            }
-        }
-        return null;
-    }
-    */
-    
 }]);
 

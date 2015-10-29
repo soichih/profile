@@ -2,5 +2,5 @@
 
 pm2 delete profile
 pm2 start profile.js --watch --ignore-watch="\.log$ \.sh$"
-
-pm2 logs profile
+pm2 save
+#pm2 logs profile

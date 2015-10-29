@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body ng-cloak>
-    <toaster-container toaster-options="{'position-class': 'toast-bottom-full-width'}"></toaster-container>
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}"></toaster-container>
     <ng-view></ng-view>
 
     <!--
@@ -50,9 +50,12 @@
     <script>
     'use strict';
     angular.module('app.config', []).constant('appconf', {
-        //title: 'Profile Service',
-        //admin_email: 'hayashis@iu.edu',
-        //version: '0.0.1',
+        /*
+        header: {
+            url: "/",
+            label: "perfSONAR MCA",
+        },
+        */
 
         //url base for sca-profile api
         api: '/api/profile',
@@ -66,7 +69,7 @@
         //authentication service URL to jump if user needs to login
         auth_url: '/auth',
 
-        jwt_id: 'jwt'
+        jwt_id: 'jwt',
     });
 
     //load shared.js (doesn't work!)

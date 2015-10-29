@@ -9,7 +9,6 @@ var jwt = require('express-jwt');
 var config = require('./config/config');
 var db = require('./models');
 
-
 //for retrieving public profile
 //since it's *public* profile, no access control is performend on this
 router.get('/public/:sub', /*jwt({secret: config.express.jwt.secret}),*/ function(req, res, next) {
@@ -96,13 +95,11 @@ router.put('/public/:sub', jwt({secret: config.express.jwt.secret}), function(re
 //return id, sub, email of all users (used by user selector or such)
 router.get('/users', jwt({secret: config.express.jwt.secret}), function(req, res) {
     db.Profile.findAll({
-        //TODO what if local sub/email logins are disabled?
-        //I should return casid or such instead
+        //TODO what if local sub/email logins are disabled? I should return casid or such instead
         attributes: ['sub', 'public'],
     }).then(function(profiles) {
         res.json(profiles);
     });
 });
-
 
 module.exports = router;

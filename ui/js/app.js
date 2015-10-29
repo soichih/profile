@@ -60,8 +60,7 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
             if(jwt == null || jwtHelper.isTokenExpired(jwt)) {
                 //TODO - use $cookies.set("messages") to send messages to user service
                 //toaster.warning("Please login first");
-                //localStorage.setItem('post_auth_redirect', next.originalPath);
-                localStorage.setItem('post_auth_redirect', window.location.toString());
+                sessionStorage.setItem('auth_redirect', window.location);
                 window.location = appconf.auth_url;
                 event.preventDefault();
             }
