@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="bower_components/angular/angular-csp.css">
 
     <!-- TODO make this configurable? don't forget the shared/css/style.css -->
-    <link rel="stylesheet" href="/shared/css/style.css">
+    <link rel="stylesheet" href="../shared/css/style.css">
 
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -57,16 +57,16 @@
         */
 
         //url base for sca-profile api
-        api: '/api/profile',
+        api: '../api/profile',
 
         //shared servive api and ui urls (for menus and stuff)
-        shared_api: '/api/shared',
-        shared_url: '/shared',
+        shared_api: '../api/shared',
+        shared_url: '../shared',
 
         //authentcation service API to refresh token, etc.
-        auth_api: '/api/auth',
+        auth_api: '../api/auth',
         //authentication service URL to jump if user needs to login
-        auth_url: '/auth',
+        auth_url: '../auth',
 
         jwt_id: 'jwt',
     });
@@ -77,7 +77,7 @@
     </script>
 
     <!-- TODO make this configurable? don't forget the shared/css/style.css -->
-    <script src="/shared/shared.js"></script>
+    <script src="../shared/shared.js"></script>
 
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
