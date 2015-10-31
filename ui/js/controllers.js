@@ -1,9 +1,10 @@
 
-app.controller('SettingsController', ['$scope', 'appconf', '$route', 'toaster', '$http', 'jwtHelper',
-function($scope, appconf, $route, toaster, $http, jwtHelper) {
+app.controller('SettingsController', ['$scope', 'appconf', '$route', 'toaster', '$http', 'jwtHelper', 'scaMessage',
+function($scope, appconf, $route, toaster, $http, jwtHelper, scaMessage) {
     $scope.form_profile = {}; //to be loaded later
     $scope.user = null;
     $scope.appconf = appconf;
+    scaMessage.show(toaster);
 
     var jwt = localStorage.getItem(appconf.jwt_id);
     var user = jwtHelper.decodeToken(jwt);
@@ -24,15 +25,10 @@ function($scope, appconf, $route, toaster, $http, jwtHelper) {
         $scope.user = info;
     });
     
-    //load menus (TODO - turn this into a service?)
-    $http.get(appconf.shared_api+'/menu/top')
-    .then(function(res) {
-        $scope.top_menu = res.data;
+    $http.get(appconf.shared_api+'/menu/top').then(function(res) { 
+        $scope.top_menu = res.data; 
     });
-    $http.get(appconf.shared_api+'/menu/settings')
-    .then(function(res) {
-        $scope.settings_menu = res.data;
-    });
+    $http.get(appconf.shared_api+'/menu/settings') .then(function(res) { $scope.settings_menu = res.data; });
     
     $scope.submit_profile = function() {
         $http.put(appconf.api+'/public/'+user.sub, $scope.form_profile)
