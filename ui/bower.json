@@ -22,9 +22,7 @@
     "angular-ui-select": "~0.11.1",
     "angularjs-toaster": "~0.4.14",
     "bootstrap": "~3.3.2",
-    "fontawesome": "~4.3.0"
-  },
-  "resolutions": {
-    "angular": "1.4.6"
+    "fontawesome": "~4.3.0",
+    "angular-gravatar": "~0.4.1"
   }
 }

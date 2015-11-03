@@ -9,6 +9,7 @@ var app = angular.module('app', [
     'angular-loading-bar',
     'angular-jwt',
     'sca-shared',
+    'ui.gravatar',
 ]);
 
 //show loading bar at the top
