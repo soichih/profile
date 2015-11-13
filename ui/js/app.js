@@ -8,8 +8,8 @@ var app = angular.module('app', [
     'toaster',
     'angular-loading-bar',
     'angular-jwt',
-    'sca-shared',
     'ui.gravatar',
+    'sca-shared',
 ]);
 
 //show loading bar at the top
@@ -21,26 +21,7 @@ app.config(['cfpLoadingBarProvider', '$logProvider', function(cfpLoadingBarProvi
 
 //configure route
 app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
-    //console.log("router provider");
     $routeProvider.
-    /*
-    when('/login', {
-        templateUrl: 't/login.html',
-        controller: 'LoginController'
-    })
-    .when('/success', {
-        templateUrl: 't/empty.html',
-        controller: 'SuccessController'
-    })
-    .when('/resetpass', {
-        templateUrl: 't/resetpass.html',
-        controller: 'ResetpassController'
-    })
-    .when('/register', {
-        templateUrl: 't/register.html',
-        controller: 'RegisterController'
-    })
-    */
     when('/settings', {
         templateUrl: 't/settings.html',
         controller: 'SettingsController',
@@ -49,8 +30,6 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     .otherwise({
         redirectTo: '/settings'
     });
-    
-    //console.dir($routeProvider);
 }]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', function($rootScope, $location, toaster, jwtHelper, appconf) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         //console.log("route changed from "+current+" to :"+next);
@@ -106,5 +85,29 @@ function(appconf, $httpProvider, jwtInterceptorProvider) {
         return jwt;
     }
     $httpProvider.interceptors.push('jwtInterceptor');
+}]);
+
+app.factory('menu', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu',
+function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu) {
+    var jwt = localStorage.getItem(appconf.jwt_id);
+    var menu = {
+        header: {
+            //label: appconf.title,
+            //icon: $sce.trustAsHtml("<img src=\""+appconf.icon_url+"\">"),
+            //url: "#/",
+        },
+        top: scaMenu,
+        user: null, //to-be-loaded
+        _profile: null, //to-be-loaded
+    };
+
+    var jwt = localStorage.getItem(appconf.jwt_id);
+    if(jwt) menu.user = jwtHelper.decodeToken(jwt);
+    if(menu.user) {
+        $http.get(appconf.profile_api+'/public/'+menu.user.sub).then(function(res) {
+            menu._profile = res.data;
+        });
+    }
+    return menu;
 }]);
 

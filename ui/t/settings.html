@@ -1,8 +1,7 @@
-<sca-menubar header="appconf.header" menu="top_menu" active="'user'" profile="form_profile"></sca-menubar>
 <div class="header">
     <h2>Settings</h2>
 </div>
-<sca-menutab menu="settings_menu" active="'profile'"></sca-menutab>
+<sca-menutab menu="settings_menu" active="'profile'" user="user"></sca-menutab>
 <div class="container-fluid">
     <!--<h3 class="page-header">Public Profile</h3>-->
     <!--
@@ -13,7 +12,7 @@
             <h4 class="list-group-item-heading">Public Profile</h4>
         </li>
         <li class="list-group-item">
-            <p class="text-muted">Only accessible to other logged in users</p>
+            <!--<p class="text-muted">Only accessible to other logged in users</p>-->
             <form ng-submit="submit_profile();">
                 <div class="form-group">
                     <label>Full Name</label>
