@@ -1,56 +1,21 @@
 
-
-app.controller('HeaderController', ['$scope', 'appconf', '$route', 'toaster', '$http', 'jwtHelper', 'menu',
-function($scope, appconf, $route, toaster, $http, jwtHelper, menu) {
+app.controller('HeaderController', ['$scope', 'appconf', 'menuservice', function($scope, appconf, menuservice) {
     $scope.title = appconf.title;
-    //serverconf.then(function(_c) { $scope.serverconf = _c; });
-    $scope.menu = menu;
-    $scope.user = menu.user; //for app menu
+    menuservice.then(function(_menu) { $scope.menu = _menu; });
 }]);
 
-app.controller('SettingsController', ['$scope', 'appconf', '$route', 'toaster', '$http', 'jwtHelper', 'scaMessage', 'scaSettingsMenu',
-function($scope, appconf, $route, toaster, $http, jwtHelper, scaMessage, scaSettingsMenu) {
+app.controller('SettingsController', ['$scope', 'appconf', '$route', 'toaster', '$http', 'scaMessage', 'scaSettingsMenu', 'menuservice',
+function($scope, appconf, $route, toaster, $http, scaMessage, scaSettingsMenu, menuservice) {
     $scope.appconf = appconf;
     scaMessage.show(toaster);
-
-    //for app menu
     $scope.settings_menu = scaSettingsMenu;
-
-    var jwt = localStorage.getItem(appconf.jwt_id);
-    var user = jwtHelper.decodeToken(jwt);
-
-    /*
-    //load user public info
-    $http.get(appconf.api+'/public/'+user.sub)
-    .success(function(profile, status, headers, config) {
-        $scope.form_profile = profile;
-    })
-    .error(function(data, status, headers, config) {
-        if(data && data.message) {
-            toaster.error(data.message);
-        }
-    }); 
-    */
-    //let's reuse the user profile already loaded
-    $scope.form_profile = $scope.menu._profile;
-
-    /*
-    //load user info
-    $http.get(appconf.auth_api+'/me')
-    .success(function(info) {
-        $scope.user = info;
+    menuservice.then(function(_menu) { 
+        //$scope.menu = _menu; //already set by header controller
+        $scope.form_profile = _menu._profile;
     });
-    */
-    
-    /*
-    $http.get(appconf.shared_api+'/menu/top').then(function(res) { 
-        $scope.top_menu = res.data; 
-    });
-    $http.get(appconf.shared_api+'/menu/settings') .then(function(res) { $scope.settings_menu = res.data; });
-    */
-    
+
     $scope.submit_profile = function() {
-        $http.put(appconf.api+'/public/'+user.sub, $scope.form_profile)
+        $http.put(appconf.api+'/public/'+$scope.menu.user.sub, $scope.form_profile)
         .success(function(data, status, headers, config) {
             var redirect = sessionStorage.getItem('profile_settings_redirect');
             if(redirect) {

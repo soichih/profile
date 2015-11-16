@@ -25,7 +25,14 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     when('/settings', {
         templateUrl: 't/settings.html',
         controller: 'SettingsController',
-        requiresLogin: true
+        requiresLogin: true,
+        /*
+        resolve: {
+            menuservice: function(menuservice) {
+                return menuservice;
+            }
+        }
+        */
     })
     .otherwise({
         redirectTo: '/settings'
@@ -87,9 +94,8 @@ function(appconf, $httpProvider, jwtInterceptorProvider) {
     $httpProvider.interceptors.push('jwtInterceptor');
 }]);
 
-app.factory('menu', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu',
-function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu) {
-    var jwt = localStorage.getItem(appconf.jwt_id);
+app.factory('menuservice', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu', '$q', '$timeout',
+function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout) {
     var menu = {
         header: {
             //label: appconf.title,
@@ -104,10 +110,18 @@ function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu) {
     var jwt = localStorage.getItem(appconf.jwt_id);
     if(jwt) menu.user = jwtHelper.decodeToken(jwt);
     if(menu.user) {
-        $http.get(appconf.api+'/public/'+menu.user.sub).then(function(res) {
+        //load user profile if user is logged in
+        return $http.get(appconf.api+'/public/'+menu.user.sub).then(function(res) {
             menu._profile = res.data;
+            return menu;
         });
+    } else {
+        //guest doesn't have any profile.. resolve immediately
+        var defer = $q.defer();
+        $timeout(function() {
+            defer.resolve(menu);
+        }, 0);
+        return defer.promise;
     }
-    return menu;
 }]);
 
