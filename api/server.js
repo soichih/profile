@@ -14,6 +14,7 @@ var expressWinston = require('express-winston');
 var config = require('./config');
 var logger = new winston.Logger(config.logger.winston);
 var db = require('./models');
+var migration = require('./migration');
 
 //init express
 var app = express();
@@ -46,6 +47,7 @@ exports.app = app;
 exports.start = function(cb) {
     db.sequelize
     .sync(/*{force: true}*/)
+    .then(migration.run)
     .then(function() {
         var port = process.env.PORT || config.express.port || '8080';
         var host = process.env.HOST || config.express.host || 'localhost';

@@ -94,8 +94,8 @@ function(appconf, $httpProvider, jwtInterceptorProvider) {
     $httpProvider.interceptors.push('jwtInterceptor');
 }]);
 
-app.factory('menuservice', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu', '$q', '$timeout',
-function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout) {
+app.factory('menuservice', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu', '$q', '$timeout', 'toaster',
+function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout, toaster) {
     var menu = {
         header: {
             //label: appconf.title,
@@ -114,14 +114,20 @@ function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout) {
         return $http.get(appconf.api+'/public/'+menu.user.sub).then(function(res) {
             menu._profile = res.data;
             return menu;
+        }, function(err) {
+            console.dir(err);
+            toaster.error(err.statusText);
         });
     } else {
         //guest doesn't have any profile.. resolve immediately
+        /*
         var defer = $q.defer();
         $timeout(function() {
             defer.resolve(menu);
         }, 0);
         return defer.promise;
+        */
+        return $q.when(menu);
     }
 }]);
 

@@ -17,7 +17,9 @@ module.exports = function(sequelize, DataTypes) {
             type: Sequelize.TEXT,
             defaultValue: '{}',
             get: function () { 
-                return JSON.parse(this.getDataValue('public'));
+                var v = this.getDataValue('public');
+                if(!v) return null;
+                return JSON.parse(v);
             },
             set: function (value) {
                 return this.setDataValue('public', JSON.stringify(value));
@@ -29,8 +31,9 @@ module.exports = function(sequelize, DataTypes) {
             type: Sequelize.TEXT,
             defaultValue: '{}',
             get: function () { 
-                if(!this.getDataValue('private')) return null;
-                return JSON.parse(this.getDataValue('private'));
+                var v = this.getDataValue('private');
+                if(!v) return null;
+                return JSON.parse(v);
             },
             set: function (value) {
                 return this.setDataValue('private', JSON.stringify(value));

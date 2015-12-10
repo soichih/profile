@@ -23,7 +23,7 @@ router.get('/public/:sub', /*jwt({secret: config.express.jwt.secret}),*/ functio
 })
 
 //for updating public profile
-router.put('/public/:sub', jwt({secret: config.express.jwt.secret}), function(req, res, next) {
+router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
 
     //needs to have user scope
     if(req.user.scopes.common.indexOf("user") == -1) {
@@ -47,7 +47,7 @@ router.put('/public/:sub', jwt({secret: config.express.jwt.secret}), function(re
 });
 
 //retreieve private profile
-router.get('/private/:sub', jwt({secret: config.express.jwt.secret}), function(req, res, next) {
+router.get('/private/:sub', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
 
     //needs to have user scope
     if(req.user.scopes.common.indexOf("user") == -1) {
@@ -69,7 +69,7 @@ router.get('/private/:sub', jwt({secret: config.express.jwt.secret}), function(r
 })
 
 //for updating private profile
-router.put('/public/:sub', jwt({secret: config.express.jwt.secret}), function(req, res, next) {
+router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
 
     //needs to have user scope
     if(req.user.scopes.common.indexOf("user") == -1) {
@@ -93,7 +93,7 @@ router.put('/public/:sub', jwt({secret: config.express.jwt.secret}), function(re
 });
 
 //return id, sub, email of all users (used by user selector or such)
-router.get('/users', jwt({secret: config.express.jwt.secret}), function(req, res) {
+router.get('/users', jwt({secret: config.express.jwt.pub}), function(req, res) {
     db.Profile.findAll({
         //TODO what if local sub/email logins are disabled? I should return casid or such instead
         attributes: ['sub', 'public'],
