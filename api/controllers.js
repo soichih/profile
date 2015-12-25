@@ -92,12 +92,15 @@ router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, 
     });
 });
 
-//return id, sub, email of all users (used by user selector or such)
+//return id, sub, and public profile of all users (used by user selector or such)
+//TODO - let user client choose which attributes to load instead?
 router.get('/users', jwt({secret: config.express.jwt.pub}), function(req, res) {
+    //provide where: { sub: { $in: ["1", "2"]}}
     db.Profile.findAll({
         //TODO what if local sub/email logins are disabled? I should return casid or such instead
         attributes: ['sub', 'public'],
     }).then(function(profiles) {
+        //console.log(JSON.stringify(profiles, null, 4));
         res.json(profiles);
     });
 });
