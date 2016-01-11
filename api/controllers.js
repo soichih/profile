@@ -25,12 +25,18 @@ router.get('/public/:sub', /*jwt({secret: config.express.jwt.secret}),*/ functio
 //for updating public profile
 router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
 
+    /*
     //needs to have user scope
-    if(req.user.scopes.common.indexOf("user") == -1) {
+    if(!~req.user.scopes.common.indexOf("user")) {
         return res.send(401, {message: "Unauthorized"});
     }
     //admin or the owner can edit it
-    if(req.user.scopes.common.indexOf("admin") == -1) {
+    if(!~req.user.scopes.common.indexOf("admin")) {
+        if(req.params.sub  != req.user.sub) return res.send(401, {message: "Unauthorized"});
+    }
+    */
+    if(!req.user.scopes.sca || !~req.user.scopes.sca.indexOf("admin")) {
+        //non admin can only update user's own profile
         if(req.params.sub  != req.user.sub) return res.send(401, {message: "Unauthorized"});
     }
 
@@ -49,13 +55,19 @@ router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, 
 //retreieve private profile
 router.get('/private/:sub', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
 
+    /*
     //needs to have user scope
-    if(req.user.scopes.common.indexOf("user") == -1) {
+    if(!~req.user.scopes.common.indexOf("user")) {
         return res.send(401, {message: "Unauthorized"});
     }
     //admin or the owner can retrieve it
-    if(req.user.scopes.common.indexOf("admin") == -1) {
+    if(!~req.user.scopes.common.indexOf("admin")) {
         if(req.params.sub != req.user.sub) return res.send(401, {message: "Unauthorized"});
+    }
+    */
+    if(!req.user.scopes.sca || !~req.user.scopes.sca.indexOf("admin")) {
+        //non admin can only update user's own profile
+        if(req.params.sub  != req.user.sub) return res.send(401, {message: "Unauthorized"});
     }
     
     db.Profile.findOne({where: {sub: /*req.user.sub*/req.params.sub}}).then(function(profile) {
@@ -70,14 +82,19 @@ router.get('/private/:sub', jwt({secret: config.express.jwt.pub}), function(req,
 
 //for updating private profile
 router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
-
+    /*
     //needs to have user scope
-    if(req.user.scopes.common.indexOf("user") == -1) {
+    if(!~req.user.scopes.common.indexOf("user")) {
         return res.send(401, {message: "Unauthorized"});
     }
     //admin or the owner can edit it
-    if(req.user.scopes.common.indexOf("admin") == -1) {
+    if(!~req.user.scopes.common.indexOf("admin")) {
         if(req.params.sub != req.user.sub) return res.send(401, {message: "Unauthorized"});
+    }
+    */
+    if(!req.user.scopes.sca || !~req.user.scopes.sca.indexOf("admin")) {
+        //non admin can only update user's own profile
+        if(req.params.sub  != req.user.sub) return res.send(401, {message: "Unauthorized"});
     }
 
     db.Profile.findOrCreate({where: {sub: req.params.sub}, default: {}}).spread(function(profile, created) {
@@ -85,7 +102,6 @@ router.put('/public/:sub', jwt({secret: config.express.jwt.pub}), function(req, 
             console.log("Created new profile for user id:"+req.user.sub);
         }
         profile.public = req.body;
-
         profile.save().then(function() {
             res.json({message: "Public profile updated!"});
         });
