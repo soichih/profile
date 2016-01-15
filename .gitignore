@@ -1,5 +1,6 @@
 node_modules
 ui/bower_components
+ui/config.js
 barn
 api/config
 **/debug
