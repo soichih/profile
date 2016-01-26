@@ -28,19 +28,19 @@ exports.run = function() {
                 //assume brand new - skip everything
                 return db.Migration.create({version: migrations.length}).then(resolve);
             } else {
-                var count = migrations.length;
                 var ms = migrations.splice(info.version);
                 qi = db.sequelize.getQueryInterface();
                 async.eachSeries(ms, function(m, next) {
-                    m(qi, next);
+                    m(qi, function(err) {
+                        if(err) return next(err);
+                        info.version++;
+                        next();
+                    });
                 }, function(err) {
-                    if(err) reject(err);
-                    else {
-                        info.version = count;
-                        info.save().then(function() {
-                            resolve("migration complete");
-                        });
-                    }
+                    info.save().then(function() {
+                        if(err) reject(err);
+                        else resolve("migration complete");
+                    });
                 });
             }
         });
