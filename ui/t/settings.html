@@ -1,4 +1,4 @@
-<sca-menubar header="menu.header" menu="menu.top" active="'user'" profile="menu._profile" user="menu.user"></sca-menubar>
+<sca-menubar header="menu.header" menu="menu.top" active="'user'" user="menu.user"></sca-menubar>
 <div class="header">
     <h2>Settings</h2>
 </div>
@@ -11,6 +11,7 @@
         <li class="list-group-item">
             <!--<p class="text-muted">Only accessible to other logged in users</p>-->
             <form ng-submit="submit_profile();">
+                <!--
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" class="form-control" ng-model="form_profile.fullname" name="fullname" 
@@ -21,6 +22,12 @@
                     <p class="text-muted">An email address to show to other users (it can be different from the email address used to login to your application)</p>
                     <input type="text" class="form-control" ng-model="form_profile.email" name="email" 
                         placeholder="Your email" required/>
+                </div>
+                -->
+                <div class="form-group">
+                    <label>Work Phone Number</label>
+                    <input type="text" class="form-control" ng-model="form_profile.phone_number" name="phone_number" 
+                        placeholder="812-111-2222"/>
                 </div>
                 <div class="form-group">
                     <label>Biograph</label>
@@ -36,8 +43,8 @@
         <li class="list-group-item">
             <img gravatar-src="form_profile.email" gravatar-size="90" align="left" style="padding-right: 20px;"/>
             <br>
-            <p> Your avatar is handled by <a target="_blank" href="http://gravatar.com">gravatar.com</a> using your profile email address.</p>
-            <span class="text-muted">{{form_profile.email}}</span>
+            <p> Your avatar is handled by <a target="_blank" href="http://gravatar.com">gravatar.com</a> using your account email address.</p>
+            <span class="text-muted">{{menu.user.profile.email}}</span>
             <br>
             <br>
             <br>

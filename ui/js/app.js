@@ -94,7 +94,7 @@ function(appconf, $httpProvider, jwtInterceptorProvider) {
     $httpProvider.interceptors.push('jwtInterceptor');
 }]);
 
-app.factory('menuservice', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu', '$q', '$timeout', 'toaster',
+app.factory('menu', ['appconf', '$http', 'jwtHelper', '$sce', 'scaMessage', 'scaMenu', '$q', '$timeout', 'toaster',
 function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout, toaster) {
     var menu = {
         header: {
@@ -102,13 +102,15 @@ function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout, toa
         },
         top: scaMenu,
         user: null, //to-be-loaded
-        _profile: null, //to-be-loaded
+        //_profile: null, //to-be-loaded
     };
     if(appconf.icon_url) menu.header.icon = $sce.trustAsHtml("<img src=\""+appconf.icon_url+"\">");
     if(appconf.home_url) menu.header.url = appconf.home_url
 
     var jwt = localStorage.getItem(appconf.jwt_id);
     if(jwt) menu.user = jwtHelper.decodeToken(jwt);
+    return menu;
+    /*
     if(menu.user) {
         //load user profile if user is logged in
         return $http.get(appconf.api+'/public/'+menu.user.sub).then(function(res) {
@@ -120,14 +122,8 @@ function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, $q, $timeout, toa
         });
     } else {
         //guest doesn't have any profile.. resolve immediately
-        /*
-        var defer = $q.defer();
-        $timeout(function() {
-            defer.resolve(menu);
-        }, 0);
-        return defer.promise;
-        */
         return $q.when(menu);
     }
+    */
 }]);
 
