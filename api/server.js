@@ -9,6 +9,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var winston = require('winston');
 var expressWinston = require('express-winston');
+var cors = require('cors');
 
 //mine
 var config = require('./config');
@@ -18,6 +19,7 @@ var migration = require('./migration');
 
 //init express
 var app = express();
+app.use(cors());
 app.use(bodyParser.json()); //parse application/json
 app.use(expressWinston.logger(config.logger.winston));
 
