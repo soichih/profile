@@ -9,6 +9,9 @@ function($scope, appconf, $route, toaster, $http, scaMessage, scaSettingsMenu, j
     $scope.appconf = appconf;
     scaMessage.show(toaster);
     $scope.settings_menu = scaSettingsMenu;
+
+    var jwt = localStorage.getItem(appconf.jwt_id);
+    $scope.user = jwtHelper.decodeToken(jwt);
     
     //load public profile
     $http.get(appconf.api+'/public/'+$scope.menu.user.sub).then(function(res) {
