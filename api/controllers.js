@@ -19,7 +19,7 @@ var db = require('./models');
  *
  * @apiSuccess {Object[]}       User profiles
  */
-router.get('/', jwt({secret: config.sca.auth_pubkey}), function(req, res, next) {
+router.get('/', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
     var find = {};
     if(req.query.find || req.query.where) find = JSON.parse(req.query.find || req.query.where);
     //TODO - only allow querying public profile
@@ -45,6 +45,7 @@ router.get('/', jwt({secret: config.sca.auth_pubkey}), function(req, res, next) 
  *
  */
 router.get('/public/:sub?', jwt({secret: config.express.jwt.pub, credentialsRequired: false}), function(req, res, next) {
+    var sub = null;
     if(req.user) sub = req.user.sub;
     if(req.params.sub) sub = req.params.sub;
     if(!sub) return next("Please specify sub or pass your jwt");

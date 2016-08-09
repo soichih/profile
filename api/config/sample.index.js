@@ -17,8 +17,8 @@ exports.express = {
     port: 12402,
 
     jwt: {
-        //secret: fs.readFileSync('./config/auth.pub'),
         pub: fs.readFileSync('/home/hayashis/git/auth/api/config/auth.pub'),
+        test: fs.readFileSync('./test/test.jwt'),
     }
 };
 
