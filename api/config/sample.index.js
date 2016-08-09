@@ -22,17 +22,9 @@ exports.express = {
     }
 };
 
-/*
-exports.logger = {
-    express: require('morgan')('combined'),
-    api: 'log/api.log',
-    exception: 'log/exception.log',
-    //express_error_handler: {dumpExceptions: true, showStack: true},
-}
-*/
-
 exports.logger = {
     winston: {
+        requestWhitelist: ['url', /*'headers',*/ 'method', 'httpVersion', 'originalUrl', 'query'],
         transports: [
             //display all logs to console
             new winston.transports.Console({
@@ -43,33 +35,8 @@ exports.logger = {
                 level: 'debug',
                 colorize: true
             }),
-            
-            /*
-            //store all warnings / errors in error.log
-            new (winston.transports.File)({ 
-                filename: 'error.log',
-                level: 'warn'
-            })
-            */
-        ]
-    },
-    
-    /*
-    //logfile to store all requests (and its results) in json
-    request: {
-        transports: [
-            new (winston.transports.File)({ 
-                filename: 'request.log',
-                json: true
-            })
-            new (winston.transports.Logstash)({
-                port: 28777,
-                node_name: 'isdp-soichi-dev',
-                host: 'soichi7.ppa.iu.edu'
-            })
         ]
     }
-    */
 }
 
 
