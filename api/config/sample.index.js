@@ -18,7 +18,7 @@ exports.express = {
 
     jwt: {
         pub: fs.readFileSync('/home/hayashis/git/auth/api/config/auth.pub'),
-        test: fs.readFileSync('./test/test.jwt'),
+        test: fs.readFileSync(__dirname+'/../../test/test.jwt'),
     }
 };
 

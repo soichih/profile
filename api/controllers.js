@@ -79,7 +79,14 @@ router.put('/public/:sub?', jwt({secret: config.express.jwt.pub}), function(req,
         if(created) {
             console.log("Created new profile for user id:"+req.user.sub);
         }
-        profile.public = req.body;
+        //roundabout way of updating profile.public
+        var obj = {};
+        for(var key in profile.public) {
+            obj[key] = profile.public[key];
+        }
+        for(var key in req.body) obj[key] = req.body[key];
+        profile.public = obj;
+
         profile.save().then(function() {
             res.json({message: "Public profile updated!"});
         });
@@ -135,7 +142,15 @@ router.put('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req
         if(created) {
             console.log("Created new profile for user id:"+req.user.sub);
         }
-        profile.private = req.body;
+
+        //roundabout way of updating profile.private
+        var obj = {};
+        for(var key in profile.private) {
+            obj[key] = profile.private[key];
+        }
+        for(var key in req.body) obj[key] = req.body[key];
+        profile.private = obj;
+
         profile.save().then(function() {
             res.json({message: "Public profile updated!"});
         });
