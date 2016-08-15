@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
+    "start": "node api/profile.js",
     "test": "mocha",
     "apidoc": "apidoc -i api/ -o ui/apidoc/",
     "cover": "node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec test/*.js"
