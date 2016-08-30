@@ -9,7 +9,8 @@ exports.profile = {
 
 exports.db = {
     dialect: 'sqlite',
-    storage: '/usr/local/sqlite/profile.sqlite'
+    storage: '/usr/local/sqlite/profile.sqlite',
+    logging: false,
 }
 
 exports.express = {
