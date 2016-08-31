@@ -93,7 +93,6 @@ router.put('/public/:sub?', jwt({secret: config.express.jwt.pub}), function(req,
     });
 });
 
-
 /**
  * @apiGroup Profile
  * @api {get} /private/:sub?    Get Private Profile
@@ -169,6 +168,5 @@ router.get('/users', jwt({secret: config.express.jwt.pub}), function(req, res) {
         res.json(profiles);
     });
 });
-
 
 module.exports = router;
