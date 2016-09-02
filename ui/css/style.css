@@ -30,3 +30,10 @@ body {
 .settings li.heading {
   background-color: #eee;
 }
+.fixed-top {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 999;
+  width: 100%;
+}
