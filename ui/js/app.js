@@ -57,11 +57,9 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
 //configure httpProvider to send jwt unless skipAuthorization is set in config (not tested yet..)
 app.config(['appconf', '$httpProvider', 'jwtInterceptorProvider', 
 function(appconf, $httpProvider, jwtInterceptorProvider) {
-    jwtInterceptorProvider.tokenGetter = function(jwtHelper, config, $http) {
+    jwtInterceptorProvider.tokenGetter = function(jwtHelper, $http) {
         //don't send jwt for template requests
-        if (config.url.substr(config.url.length - 5) == '.html') {
-            return null;
-        }
+        //if (config.url.substr(config.url.length - 5) == '.html') { return null; }
         var jwt = localStorage.getItem(appconf.jwt_id);
         if(!jwt) return null; //not jwt
 

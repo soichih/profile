@@ -3,4 +3,3 @@
 pm2 delete sca-profile
 pm2 start profile.js --name sca-profile --watch --ignore-watch="\.log$ \.sh$"
 pm2 save
-#pm2 logs profile

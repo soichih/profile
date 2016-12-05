@@ -9,6 +9,7 @@ var jwt = require('express-jwt');
 var config = require('./config');
 var db = require('./models');
 
+//NOTE... if you want all user's public profile, you are probablly more interested in auth/profile API.
 /**
  * @api {get} /                 Query user public profiles
  * @apiParam {Object} find      Optional Mongo query to perform
@@ -20,18 +21,13 @@ var db = require('./models');
  * @apiSuccess {Object[]}       User profiles
  */
 router.get('/', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
-    var find = {};
-    if(req.query.find || req.query.where) find = JSON.parse(req.query.find || req.query.where);
-    //TODO - only allow querying public profile
-    var query = db.Profiles.find(find);
-    if(req.query.sort) query.sort(req.query.sort);
-    if(req.query.limit) query.limit(req.query.limit);
-    query.exec(function(err, profiles) {
-        if(err) return next(err);
-        profiles.forEach(function(profile) {
-            delete profiles.private;
-        });
-        res.json(profiles);
+    var query = {attributes: ['sub', 'public']}; //no private profile
+    if(req.query.where) query.where = JSON.parse(req.query.where);
+    if(req.query.order) query.order = req.query.order;
+    if(req.query.limit) query.limit = req.query.limit;
+    if(req.query.offset) query.offset = req.query.offset;
+    db.Profile.findAll(query).then(function(profiles) {
+        res.json({profiles: profiles, count: -1}); //count - TODO
     });
 });
 
