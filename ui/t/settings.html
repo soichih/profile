@@ -14,7 +14,8 @@
         </li>
         <li class="list-group-item">
             <!--<p class="text-muted">Only accessible to other logged in users</p>-->
-            <form ng-submit="submit_profile();">
+            {{profile_form}}
+            <form name="profile_form" ng-submit="submit_profile();">
                 <!--
                 <div class="form-group">
                     <label>Full Name</label>
@@ -38,7 +39,7 @@
                     <textarea rows="6" class="form-control" ng-model="form_profile.bio" name="bio" 
                         placeholder="Please enter a brief introduction about yourself"></textarea>
                 </div>
-                <input type="submit" class="btn" value="Update"/>
+                <input type="submit" class="btn btn-primary" value="Update" ng-if="profile_form.$dirty"/>
             </form><!--profile form-->
         </li>
         <li class="list-group-item heading">
