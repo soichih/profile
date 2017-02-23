@@ -4,7 +4,7 @@ var winston = require('winston');
 
 exports.profile = {
     //page for main login form
-    login_url: 'https://somewhere/auth',
+    login_url: 'https://soichi7.ppa.iu.edu/auth',
 }
 
 exports.db = {
@@ -15,11 +15,11 @@ exports.db = {
 
 exports.express = {
     //web server port
-    host: "0.0.0.0",
     port: 8080,
 
     jwt: {
-        pub: fs.readFileSync(__dirname+'/auth.pub'),
+        pub: fs.readFileSync('/app/api/config/auth.pub'),
+        //test: fs.readFileSync(__dirname+'/../../test/test.jwt'),
     }
 };
 

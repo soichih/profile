@@ -4,3 +4,5 @@ ui/config.js
 barn
 api/config/index.js
 **/debug
+docker/config
+docker/db

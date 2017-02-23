@@ -1,13 +1,15 @@
 'use strict';
 
 //contrib
-var express = require('express');
-var router = express.Router();
-var jwt = require('express-jwt');
+const express = require('express');
+const router = express.Router();
+const jwt = require('express-jwt');
+const winston = require('winston');
 
 //mine
-var config = require('./config');
-var db = require('./models');
+const config = require('./config');
+const db = require('./models');
+const logger = new winston.Logger(config.logger.winston);
 
 //NOTE... if you want all user's public profile, you are probablly more interested in auth/profile API.
 /**
@@ -164,5 +166,11 @@ router.get('/users', jwt({secret: config.express.jwt.pub}), function(req, res) {
         res.json(profiles);
     });
 });
+
+/*
+router.get('/noret', function(req, res) {
+    console.log("noret requeste");
+});
+*/
 
 module.exports = router;

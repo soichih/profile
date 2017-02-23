@@ -1,10 +1,10 @@
-node_modules
 debug
 coverage
 example
 test
 barn
 api/config
+ui/config.js
 docker/config
 docker/db
-
+node_modules
