@@ -20,6 +20,19 @@ function($scope, $route, toaster, $http, scaMessage, scaSettingsMenu, jwtHelper)
         else toaster.error(res.statusText);
     });
 
+    /*
+    //load institutions used by other users
+    $http.get($scope.appconf.api).then(function(res) {
+        $scope.institutions = res.data.profiles.map(p=>{
+            return p.public.institutions;
+        });
+        $scope.institutions.push("Indiana University");
+    }, function(res) {
+        if(res.data && res.data.message) toaster.error(res.data.message);
+        else toaster.error(res.statusText);
+    });
+    */
+
     $scope.submit_profile = function() {
         $http.put($scope.appconf.api+'/public/'+$scope.menu.user.sub, $scope.form_profile)
         .then(function(res) {

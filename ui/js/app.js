@@ -5,10 +5,12 @@ var app = angular.module('app', [
     'ngRoute',
     'ngAnimate',
     'ngCookies',
+    'ngSanitize',
     'toaster',
     'angular-loading-bar',
     'angular-jwt',
     'ui.gravatar',
+    'ui.select',
     'sca-shared',
 ]);
 
@@ -26,13 +28,6 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         templateUrl: 't/settings.html',
         controller: 'SettingsController',
         requiresLogin: true,
-        /*
-        resolve: {
-            menuservice: function(menuservice) {
-                return menuservice;
-            }
-        }
-        */
     })
     .otherwise({
         redirectTo: '/settings'

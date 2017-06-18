@@ -7,8 +7,7 @@ RUN npm install http-server -g && \
     pm2 install pm2-logrotate
 
 COPY . /app
-RUN cd /app && npm install --production
-RUN cd /app/ui && npm install --production
+RUN cd /app && npm install --production && cd ui && npm install --production
 
 EXPOSE 80
 EXPOSE 8080

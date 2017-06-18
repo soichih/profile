@@ -34,6 +34,18 @@
                         placeholder="812-111-2222"/>
                 </div>
                 <div class="form-group">
+                    <label>Institution</label>
+                    <input type="text" class="form-control" ng-model="form_profile.institution" name="institution" placeholder="Like.. Indiana University"/>
+                    <!--
+                    <ui-select ng-model="form_profile.institution" tagging tagging-label="(custom 'new' label)" >
+                        <ui-select-match placeholder="Enter or search institution">{{$select.selected}}</ui-select-match>
+                        <ui-select-choices repeat="inst in institutions | filter:$select.search">
+                            {{inst}}
+                        </ui-select-choices>
+                    </ui-select>
+                    -->
+                </div>
+                <div class="form-group">
                     <label>Biograph</label>
                     <textarea rows="6" class="form-control" ng-model="form_profile.bio" name="bio" 
                         placeholder="Please enter a brief introduction about yourself"></textarea>
