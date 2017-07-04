@@ -5,6 +5,8 @@ angular.module('app.config', []).constant('appconf', {
     home_url: '../meshconfig', 
     */
 
+    title: 'Profile Service',
+
     //url base for sca-profile api
     api: '../api/profile',
 
