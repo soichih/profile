@@ -11,7 +11,6 @@ const config = require('./config');
 const db = require('./models');
 const logger = new winston.Logger(config.logger.winston);
 
-//NOTE... if you want all user's public profile, you are probablly more interested in auth/profile API.
 /**
  * @api {get} /                 Query user public profiles
  * @apiParam {Object} find      Optional Mongo query to perform
