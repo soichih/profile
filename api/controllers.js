@@ -12,10 +12,10 @@ const db = require('./models');
 const logger = new winston.Logger(config.logger.winston);
 
 /**
+ * @apiGroup Profile
  * @api {get} /                 Query user public profiles
  * @apiParam {Object} find      Optional Mongo query to perform
  * @apiDescription              Returns all user profiles that matches query
- * @apiGroup Profile
  * 
  * @apiHeader {String}          Authorization A valid JWT token "Bearer: xxxxx"
  *
