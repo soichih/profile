@@ -1,14 +1,12 @@
 
 //contrib
-var winston = require('winston');
-var async = require('async');
-var Promise = require('promise');
-var Sequelize = require('sequelize');
+const winston = require("winston");
+const async = require("async");
 
 //mine
-var config = require('./config');
-var logger = new winston.Logger(config.logger.winston);
-var db = require('./models');
+const config = require("./config");
+const logger = new winston.Logger(config.logger.winston);
+const db = require("./models");
 
 var migrations = [
     /*

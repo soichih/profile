@@ -1,35 +1,33 @@
-'use strict';
-
 //contrib
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const jwt = require('express-jwt');
-const winston = require('winston');
+const jwt = require("express-jwt");
+const winston = require("winston");
 
 //mine
-const config = require('./config');
-const db = require('./models');
+const config = require("./config");
+const db = require("./models");
 const logger = new winston.Logger(config.logger.winston);
 
 /**
  * @apiGroup Profile
  * @api {get} /                 Query user public profiles
- * @apiParam {Object} find      Optional Mongo query to perform
+ * @apiParam {Object} where     Optional sequelize query to perform
  * @apiDescription              Returns all user profiles that matches query
  * 
  * @apiHeader {String}          Authorization A valid JWT token "Bearer: xxxxx"
  *
  * @apiSuccess {Object[]}       User profiles
  */
-router.get('/', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
-    var query = {attributes: ['sub', 'public']}; //no private profile
+router.get("/", jwt({secret: config.express.jwt.pub}), function(req, res, next) {
+    var query = {attributes: ["sub", "public"]}; //no private profile
     if(req.query.where) query.where = JSON.parse(req.query.where);
     if(req.query.order) query.order = req.query.order;
     if(req.query.limit) query.limit = req.query.limit;
     if(req.query.offset) query.offset = req.query.offset;
     db.Profile.findAll(query).then(function(profiles) {
         res.json({profiles: profiles, count: -1}); //count - TODO
-    });
+    }).catch(next);
 });
 
 /**
@@ -41,7 +39,7 @@ router.get('/', jwt({secret: config.express.jwt.pub}), function(req, res, next) 
  * @apiHeader {String}          Authorization A valid JWT token "Bearer: xxxxx" (optional)
  *
  */
-router.get('/public/:sub?', jwt({secret: config.express.jwt.pub, credentialsRequired: false}), function(req, res, next) {
+router.get("/public/:sub?", jwt({secret: config.express.jwt.pub, credentialsRequired: false}), function(req, res, next) {
     var sub = null;
     if(req.user) sub = req.user.sub;
     if(req.params.sub) sub = req.params.sub;
@@ -53,8 +51,8 @@ router.get('/public/:sub?', jwt({secret: config.express.jwt.pub, credentialsRequ
             //maybe user hasn't created his profile yet - it's ok to return empty in that case
             res.json({}); 
         }
-    });
-})
+    }).catch(next);
+});
 
 /**
  * @apiGroup Profile
@@ -64,7 +62,7 @@ router.get('/public/:sub?', jwt({secret: config.express.jwt.pub, credentialsRequ
  * @apiHeader {String}          Authorization A valid JWT token "Bearer: xxxxx"
  *
  */
-router.put('/public/:sub?', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
+router.put("/public/:sub?", jwt({secret: config.express.jwt.pub}), function(req, res, next) {
     var sub = req.user.sub;
     if(req.params.sub) sub = req.params.sub;
     if(!req.user.scopes.sca || !~req.user.scopes.sca.indexOf("admin")) {
@@ -74,20 +72,19 @@ router.put('/public/:sub?', jwt({secret: config.express.jwt.pub}), function(req,
 
     db.Profile.findOrCreate({where: {sub: sub}, default: {}}).spread(function(profile, created) {
         if(created) {
-            console.log("Created new profile for user id:"+req.user.sub);
+            logger.debug("Created new profile for user id:"+req.user.sub);
         }
         //roundabout way of updating profile.public
         var obj = {};
-        for(var key in profile.public) {
+        for(let key in profile.public) {
             obj[key] = profile.public[key];
         }
-        for(var key in req.body) obj[key] = req.body[key];
+        for(let key in req.body) obj[key] = req.body[key];
         profile.public = obj;
-
         profile.save().then(function() {
             res.json({message: "Public profile updated!"});
         });
-    });
+    }).catch(next);
 });
 
 /**
@@ -99,7 +96,7 @@ router.put('/public/:sub?', jwt({secret: config.express.jwt.pub}), function(req,
  * @apiHeader {String}          Authorization A valid JWT token "Bearer: xxxxx"
  *
  */
-router.get('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
+router.get("/private/:sub?", jwt({secret: config.express.jwt.pub}), function(req, res, next) {
     var sub = req.user.sub;
     if(req.params.sub) sub = req.params.sub;
     if(!req.user.scopes.sca || !~req.user.scopes.sca.indexOf("admin")) {
@@ -115,7 +112,7 @@ router.get('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req
             res.json({}); 
         }
     });
-})
+});
 
 /**
  * @apiGroup Profile
@@ -126,7 +123,7 @@ router.get('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req
  * @apiHeader {String}          Authorization A valid JWT token "Bearer: xxxxx"
  *
  */
-router.put('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req, res, next) {
+router.put("/private/:sub?", jwt({secret: config.express.jwt.pub}), function(req, res, next) {
     var sub = req.user.sub;
     if(req.params.sub) sub = req.params.sub;
     if(!req.user.scopes.sca || !~req.user.scopes.sca.indexOf("admin")) {
@@ -134,21 +131,23 @@ router.put('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req
         if(sub  != req.user.sub) return res.send(401, {message: "Unauthorized"});
     }
 
+    logger.debug(req.body);
+
     db.Profile.findOrCreate({where: {sub: sub}, default: {}}).spread(function(profile, created) {
         if(created) {
-            console.log("Created new profile for user id:"+req.user.sub);
+            logger.debug("Created new profile for user id:"+req.user.sub);
         }
 
         //roundabout way of updating profile.private
         var obj = {};
-        for(var key in profile.private) {
+        for(let key in profile.private) {
             obj[key] = profile.private[key];
         }
-        for(var key in req.body) obj[key] = req.body[key];
+        for(let key in req.body) obj[key] = req.body[key];
         profile.private = obj;
-
-        profile.save().then(function() {
-            res.json({message: "Public profile updated!"});
+       
+        profile.save().then(function(saved) {
+            res.json({message: "Private profile updated!" /*, profile: saved*/});
         });
     });
 });
@@ -156,20 +155,14 @@ router.put('/private/:sub?', jwt({secret: config.express.jwt.pub}), function(req
 //DEPRECATED - use GET / query
 //return id, sub, and public profile of all users (used by user selector or such)
 //TODO - let user client choose which attributes to load instead?
-router.get('/users', jwt({secret: config.express.jwt.pub}), function(req, res) {
+router.get("/users", jwt({secret: config.express.jwt.pub}), function(req, res) {
     db.Profile.findAll({
         //TODO what if local sub/email logins are disabled? I should return casid or such instead
-        attributes: ['sub', 'public'],
+        attributes: ["sub", "public"],
     }).then(function(profiles) {
         //console.log(JSON.stringify(profiles, null, 4));
         res.json(profiles);
     });
 });
-
-/*
-router.get('/noret', function(req, res) {
-    console.log("noret requeste");
-});
-*/
 
 module.exports = router;
