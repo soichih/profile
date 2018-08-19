@@ -26,7 +26,7 @@ router.get("/", jwt({secret: config.express.jwt.pub}), function(req, res, next) 
     if(req.query.limit) query.limit = req.query.limit;
     if(req.query.offset) query.offset = req.query.offset;
     db.Profile.findAll(query).then(function(profiles) {
-        res.json({profiles: profiles, count: -1}); //count - TODO
+        res.json({profiles, count: -1}); //count - TODO
     }).catch(next);
 });
 
@@ -40,11 +40,16 @@ router.get("/", jwt({secret: config.express.jwt.pub}), function(req, res, next) 
  *
  */
 router.get("/public/:sub?", jwt({secret: config.express.jwt.pub, credentialsRequired: false}), function(req, res, next) {
-    var sub = null;
+    let maxage=300; //don't reload sooner than 5 minutes
+    res.setHeader("Cache-Control", "public, max-age="+maxage);
+    res.setHeader("Expires", new Date(Date.now() + maxage*1000).toUTCString());
+
+    let sub = null;
     if(req.user) sub = req.user.sub;
     if(req.params.sub) sub = req.params.sub;
     if(!sub) return next("Please specify sub or pass your jwt");
     db.Profile.findOne({where: {sub: req.params.sub}}).then(function(profile) {
+        logger.debug("settting max-age", maxage);
         if(profile) {
             res.json(profile.public);
         } else {

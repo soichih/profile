@@ -1,4 +1,4 @@
-tag=1.1.1
+tag=1.1.2
 
 docker build -t soichih/profile ..
 if [ ! $? -eq 0 ]; then
