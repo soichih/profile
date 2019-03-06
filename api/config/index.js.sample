@@ -1,6 +1,7 @@
 
-var fs = require('fs');
-var winston = require('winston');
+const fs = require('fs');
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, label, prettyPrint } = format;
 
 exports.profile = {
     //page for main login form
@@ -11,6 +12,12 @@ exports.db = {
     dialect: 'sqlite',
     storage: "/home/hayashis/profile.sqlite",
     logging: false,
+}
+
+exports.event = {
+    amqp: {
+        url: "amqp://profile:gobrain@localhost:5672/brainlife"
+    },
 }
 
 exports.express = {
@@ -25,16 +32,26 @@ exports.express = {
 
 exports.logger = {
     winston: {
+        level: 'debug', 
+        format: combine(
+            label({ label: 'profile-dev' }), 
+            timestamp(),
+            format.colorize(),
+            format.splat(),
+            format.printf(info=>{
+                return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
+            }),
+        ),
+
         requestWhitelist: ['url', /*'headers',*/ 'method', 'httpVersion', 'originalUrl', 'query'],
+        exceptionHandlers: [
+            new transports.Console(),
+        ],
+
         transports: [
             //display all logs to console
-            new winston.transports.Console({
-                timestamp: function() {
-                    var d = new Date();
-                    return d.toString(); //show timestamp
-                },
-                level: 'debug',
-                colorize: true
+            new transports.Console({
+                stderrLevels: ["error"], //error is sent to stdout by default..
             }),
         ]
     }

@@ -1,15 +1,9 @@
-'use strict';
 
-//this table holds current migration version 
-//TODO - maybe I should rename this to "Info" or "Config" or such?
+const Sequelize = require('sequelize');
+const winston = require('winston');
 
-//contrib
-var Sequelize = require('sequelize');
-var winston = require('winston');
-
-//mine
-var config = require('../config');
-var logger = new winston.Logger(config.logger.winston);
+const config = require('../config');
+const logger = winston.createLogger(config.logger.winston);
 
 //for field types
 //http://docs.sequelizejs.com/en/latest/api/datatypes/

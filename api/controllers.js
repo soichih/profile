@@ -1,13 +1,37 @@
+
 //contrib
 const express = require("express");
 const router = express.Router();
 const jwt = require("express-jwt");
 const winston = require("winston");
 
+const amqp = require("amqp");
+
 //mine
 const config = require("./config");
 const db = require("./models");
-const logger = new winston.Logger(config.logger.winston);
+const logger = winston.createLogger(config.logger.winston);
+
+let amqp_conn;
+function get_amqp_connection(cb) {
+    if(amqp_conn) return cb(null, amqp_conn); //already connected
+    amqp_conn = amqp.createConnection(config.event.amqp, {reconnectBackoffTime: 1000*10});
+    amqp_conn.once("ready", ()=>{
+        cb(null, amqp_conn);
+    });
+    amqp_conn.on("error", err=>{
+        logger.error(err);
+    });
+}
+
+let profile_ex;
+get_amqp_connection((err, conn)=>{
+    if(err) throw err;
+    logger.debug("creating profile amqp exchange");
+    conn.exchange("profile", {autoDelete: false, durable: true, type: 'topic', confirm: true}, (ex)=>{
+        profile_ex = ex;
+    });
+});
 
 /**
  * @apiGroup Profile
@@ -75,7 +99,7 @@ router.put("/public/:sub?", jwt({secret: config.express.jwt.pub}), function(req,
         if(sub != req.user.sub) return res.send(401, {message: "Unauthorized"});
     }
 
-    db.Profile.findOrCreate({where: {sub: sub}, default: {}}).spread(function(profile, created) {
+    db.Profile.findOrCreate({where: {sub}, default: {}}).spread(function(profile, created) {
         if(created) {
             logger.debug("Created new profile for user id:"+req.user.sub);
         }
@@ -89,6 +113,7 @@ router.put("/public/:sub?", jwt({secret: config.express.jwt.pub}), function(req,
         profile.save().then(function() {
             res.json({message: "Public profile updated!"});
         });
+        profile_ex.publish(sub+".public", obj);
     }).catch(next);
 });
 
@@ -136,7 +161,7 @@ router.put("/private/:sub?", jwt({secret: config.express.jwt.pub}), function(req
         if(sub  != req.user.sub) return res.send(401, {message: "Unauthorized"});
     }
 
-    logger.debug(req.body);
+    //logger.debug(req.body);
 
     db.Profile.findOrCreate({where: {sub: sub}, default: {}}).spread(function(profile, created) {
         if(created) {
@@ -150,10 +175,10 @@ router.put("/private/:sub?", jwt({secret: config.express.jwt.pub}), function(req
         }
         for(let key in req.body) obj[key] = req.body[key];
         profile.private = obj;
-       
         profile.save().then(function(saved) {
             res.json({message: "Private profile updated!" /*, profile: saved*/});
         });
+        profile_ex.publish(sub+".private", obj);
     });
 });
 
